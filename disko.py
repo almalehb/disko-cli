@@ -30,7 +30,7 @@ with open('search_results.csv', 'w', newline='') as file:
 
     # First row has the filter information
     if filter_type and filter_value:
-        writer.writerow([f"Filter: {filter_type} = {filter_value}"])
+        writer.writerow([f"{filter_type}",f"{filter_value}"])
 
     # Next row contains the headers
     writer.writerow(["File Name", "Size (MB)", "Date Modified", "File Format", "File Path"])
