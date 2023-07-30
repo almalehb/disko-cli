@@ -1,14 +1,12 @@
 import os
 import csv
 from datetime import datetime
-import mimetypes
 import sys
 import time
 
 # request path for directory to search inside plus optional filter 
-if len(sys.argv) < 2 or len(sys.argv) > 4:
-    print("Usage: python file_info.py <directory_path> [min-size <size_in_MB>]")
-    print("       python file_info.py <directory_path> [file-format <format>]")
+if len(sys.argv) < 2 or len(sys.argv) > 6:
+    print("Usage: python file_info.py <directory_path> [min-size <size_in_MB>] [file-format <format>]")
     sys.exit(1)
 
 dir_path = sys.argv[1]
@@ -20,9 +18,21 @@ if not os.path.isdir(dir_path):
     print("Directory does not exist!")
     sys.exit(1)
 
-if len(sys.argv) == 4:
-    filter_type = sys.argv[2]
-    filter_value = sys.argv[3]
+if len(sys.argv) >= 4:
+    filter_type_1 = sys.argv[2]
+    filter_value_1 = sys.argv[3]
+    if filter_type_1 == "min-size":
+        filter_size = float(filter_value_1)
+    elif filter_type_1 == "file-format":
+        filter_format = filter_value_1
+
+if len(sys.argv) == 6:
+    filter_type_2 = sys.argv[4]
+    filter_value_2 = sys.argv[5]
+    if filter_type_2 == "min-size":
+        filter_size = float(filter_value_2)
+    elif filter_type_2 == "file-format":
+        filter_format = filter_value_2
 
 # Let's prepare the CSV file
 with open('unfiltered.csv', 'w', newline='') as file:
@@ -35,6 +45,14 @@ with open('unfiltered.csv', 'w', newline='') as file:
     # Next row contains the headers
     writer.writerow(["File Name", "Size (MB)", "Date Modified", "File Format", "File Path"])
     
+    # Write the filter information
+    filter_info = ["null", "null", "null", "null", "null"]
+    if filter_size is not None:
+        filter_info[1] = f"> {filter_size}"
+    if filter_format is not None:
+        filter_info[3] = filter_format
+    writer.writerow(filter_info)
+
     # Let's walk through the directory, recursively
     for root, directories, files in os.walk(dir_path):
 
@@ -55,9 +73,7 @@ with open('unfiltered.csv', 'w', newline='') as file:
                 date_modified = datetime.fromtimestamp(os.path.getmtime(file_path))
                 date_modified = date_modified.strftime("%m-%d-%Y %H:%M:%S")
                 # file format
-                file_format = mimetypes.guess_type(file_path)[0]
-                if file_format and "/" in file_format:
-                    file_format = file_format.split("/")[-1]
+                file_format = os.path.splitext(file_path)[1][1:]  # Exclude the first character which is '.'
                 # write the data that we have
                 writer.writerow([name, size, date_modified, file_format, file_path])
             except Exception as e:
