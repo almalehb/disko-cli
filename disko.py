@@ -25,7 +25,7 @@ if len(sys.argv) == 4:
     filter_value = sys.argv[3]
 
 # Let's prepare the CSV file
-with open('search_results.csv', 'w', newline='') as file:
+with open('unfiltered.csv', 'w', newline='') as file:
     writer = csv.writer(file)
 
     # First row has the filter information
@@ -67,9 +67,9 @@ with open('search_results.csv', 'w', newline='') as file:
 while not os.path.exists('filtered.csv'):
     time.sleep(1)
 
-# We don't need search_results.csv anymore
-if os.path.exists('search_results.csv'):
-    os.remove('search_results.csv')
+# We don't need unfiltered.csv anymore
+if os.path.exists('unfiltered.csv'):
+    os.remove('unfiltered.csv')
 
 # Let's print out the contents of filtered.csv, in a somewhat structured way (keep columns aligned)
 # We need to figure out the maximum length of all fields
