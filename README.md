@@ -6,5 +6,5 @@ To use this script, there are two possible ways to filter files. Either by size,
 
 [Example CSV output](example-csv/search_results.csv) 
 
-![Diagram](images/Diagram.jpeg)
+![Diagram](images/diagram.jpeg)
 
