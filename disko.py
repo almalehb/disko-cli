@@ -5,24 +5,35 @@ import mimetypes
 import sys
 import time
 
-# request path for directory to search inside
-if len(sys.argv) != 2:
-    print("How to use: python disko.py <directory_path>")
+# request path for directory to search inside plus optional filter 
+if len(sys.argv) < 2 or len(sys.argv) > 4:
+    print("Usage: python file_info.py <directory_path> [min-size <size_in_MB>]")
+    print("       python file_info.py <directory_path> [file-format <format>]")
     sys.exit(1)
 
 dir_path = sys.argv[1]
+filter_type = None
+filter_value = None
 
 # does the directory exist? 
 if not os.path.isdir(dir_path):
     print("Directory does not exist!")
     sys.exit(1)
 
+if len(sys.argv) == 4:
+    filter_type = sys.argv[2]
+    filter_value = sys.argv[3]
+
 # Let's prepare the CSV file
 with open('search_results.csv', 'w', newline='') as file:
     writer = csv.writer(file)
 
-    # First row contains the headers
-    writer.writerow(["File Name", "Size (Bytes)", "Date Modified", "File Format", "File Path"])
+    # First row has the filter information
+    if filter_type and filter_value:
+        writer.writerow([f"Filter: {filter_type} = {filter_value}"])
+
+    # Next row contains the headers
+    writer.writerow(["File Name", "Size (MB)", "Date Modified", "File Format", "File Path"])
     
     # Let's walk through the directory, recursively
     for root, directories, files in os.walk(dir_path):
@@ -38,12 +49,15 @@ with open('search_results.csv', 'w', newline='') as file:
             file_path = os.path.join(root, name)
             
             try:
-                # file size
-                size = os.path.getsize(file_path)
+                # file size (megabytes)
+                size = round(os.path.getsize(file_path) / (1024 * 1024), 2)
                 # last modified date
-                date_modified = datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat()
+                date_modified = datetime.fromtimestamp(os.path.getmtime(file_path))
+                date_modified = date_modified.strftime("%m-%d-%Y %H:%M:%S")
                 # file format
                 file_format = mimetypes.guess_type(file_path)[0]
+                if file_format and "/" in file_format:
+                    file_format = file_format.split("/")[-1]
                 # write the data that we have
                 writer.writerow([name, size, date_modified, file_format, file_path])
             except Exception as e:
