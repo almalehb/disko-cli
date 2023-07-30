@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 import mimetypes
 import sys
+import time
 
 # request path for directory to search inside
 if len(sys.argv) != 2:
@@ -17,9 +18,9 @@ if not os.path.isdir(dir_path):
     sys.exit(1)
 
 # Let's prepare the CSV file
-with open('results.csv', 'w', newline='') as file:
+with open('search_results.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    
+
     # First row contains the headers
     writer.writerow(["File Name", "Size (Bytes)", "Date Modified", "File Format", "File Path"])
     
@@ -47,3 +48,28 @@ with open('results.csv', 'w', newline='') as file:
                 writer.writerow([name, size, date_modified, file_format, file_path])
             except Exception as e:
                 print(f"Can't get info for file {file_path}! Error: {str(e)}")
+
+# Now we wait for the microservice to finish its filtering work, which would output filtered.csv 
+while not os.path.exists('filtered.csv'):
+    time.sleep(1)
+
+# We don't need search_results.csv anymore
+if os.path.exists('search_results.csv'):
+    os.remove('search_results.csv')
+
+# Let's print out the contents of filtered.csv, in a somewhat structured way (keep columns aligned)
+# We need to figure out the maximum length of all fields
+all_rows = []
+max_lens = []
+with open('filtered.csv', 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        all_rows.append(row)
+        if not max_lens:
+            max_lens = [len(field) for field in row]
+        else:  
+            max_lens = [max(max_lens[i], len(field)) for i, field in enumerate(row)]
+
+# Finally, print out the contents of filtered.csv in a tabular format
+for row in all_rows:
+    print(' '.join('%%-%ds' % max_lens[i] % field for i, field in enumerate(row)))
