@@ -73,7 +73,7 @@ with open('unfiltered.csv', 'w', newline='') as file:
                 date_modified = datetime.fromtimestamp(os.path.getmtime(file_path))
                 date_modified = date_modified.strftime("%m-%d-%Y %H:%M:%S")
                 # file format
-                file_format = os.path.splitext(file_path)[1][1:]  # Exclude the first character which is '.'
+                file_format = os.path.splitext(file_path)[1][1:]  
                 # write the data that we have
                 writer.writerow([name, size, date_modified, file_format, file_path])
             except Exception as e:
