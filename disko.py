@@ -49,7 +49,8 @@ with open('unfiltered.csv', 'w', newline='') as file:
     if filter_format is not None:
         filter_info[3] = filter_format
     if filter_date is not None:
-        filter_info[2] = f"> {filter_date}"
+        formatted_date = filter_date.strftime("%m/%d/%Y %H:%M:%S")
+        filter_info[2] = f"> {formatted_date}"
     writer.writerow(filter_info)
     
     file_data = []  # List to store the data of all files
@@ -71,7 +72,7 @@ with open('unfiltered.csv', 'w', newline='') as file:
                 size = round(os.path.getsize(file_path) / (1024 * 1024), 2)
                 # last modified date (incl. formatting, per contract)
                 date_modified = datetime.fromtimestamp(os.path.getmtime(file_path))
-                date_modified_str = date_modified.strftime("%m-%d-%Y %H:%M:%S")
+                date_modified_str = date_modified.strftime("%m/%d/%Y %H:%M:%S")
                 # get file extension
                 file_format = os.path.splitext(file_path)[1][1:]  
                 # store all that data
