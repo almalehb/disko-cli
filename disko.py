@@ -33,7 +33,7 @@ filter_format = get_filter_value('file-format')
 
 filter_date = get_filter_value('newer-than')
 if filter_date:
-    filter_date = datetime.strptime(filter_date, "%m/%d/%y %H:%M:%S")
+    filter_date = datetime.strptime(filter_date, "%m/%d/%Y %H:%M:%S")
 
 # now we can build the CSV file
 with open('unfiltered.csv', 'w', newline='') as file:
