@@ -60,7 +60,7 @@ def build_filter_information(filter_size, filter_format, filter_date):
 
 
 def build_directory_data(root, dirs, files):
-    dirs[:] = [d for d in dirs if not d[0] == '.'] # Ignore hidden directories
+    dirs[:] = [d for d in dirs if not d[0] == '.'] # ignore hidden directories
     directory_data = [] 
 
     for name in files:
@@ -95,12 +95,12 @@ def build_CSV(dir_path, filter_size, filter_format, filter_date):
         filter_info = build_filter_information(filter_size, filter_format, filter_date)
         writer.writerow(filter_info)
         
-        # let's walk through directory
+        # walk through the directory to build the rows
         for root, dirs, files in os.walk(dir_path):
             directory_data = build_directory_data(root, dirs, files)
             for data in directory_data:
                 if data is not None: 
-                    writer.writerow(data) # write the data to the CSV file
+                    writer.writerow(data) 
 
 
 def wait_for_filter():
