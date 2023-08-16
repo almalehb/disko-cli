@@ -7,6 +7,7 @@ import time
 
 def print_instructions():
     if len(sys.argv) < 2:
+        print("Welcome to Disko! This tool helps you review the contents of your directories.")
         print("Usage: python disko.py <directory_path> [min-size <size_in_MB>] [file-format <format>] [newer-than <date>]")
         sys.exit(1)
 
