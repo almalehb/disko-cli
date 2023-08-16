@@ -61,6 +61,7 @@ def build_filter_information(filter_size, filter_format, filter_date):
 
 def build_directory_data(root, dirs, files):
     dirs[:] = [d for d in dirs if not d[0] == '.'] # Ignore hidden directories
+    directory_data = [] 
 
     for name in files:
         if name.startswith('.'): # also, ignore hidden files
@@ -76,10 +77,11 @@ def build_directory_data(root, dirs, files):
             date_modified_str = date_modified.strftime("%m/%d/%Y %H:%M:%S")
             # get file extension
             file_format = os.path.splitext(file_path)[1][1:]  
-            return [name, size, date_modified_str, file_format, file_path]
+            directory_data.append([name, size, date_modified_str, file_format, file_path])
         except Exception as e:
             print(f"Cannot get info for file {file_path}. Error: {str(e)}")
-            return None 
+
+    return directory_data 
 
 
 def build_CSV(dir_path, filter_size, filter_format, filter_date): 
@@ -95,9 +97,10 @@ def build_CSV(dir_path, filter_size, filter_format, filter_date):
         
         # let's walk through directory
         for root, dirs, files in os.walk(dir_path):
-            data = build_directory_data(root, dirs, files)
-            if data is not None: 
-                writer.writerow(data) # write the data to the CSV file
+            directory_data = build_directory_data(root, dirs, files)
+            for data in directory_data:
+                if data is not None: 
+                    writer.writerow(data) # write the data to the CSV file
 
 
 def wait_for_filter():
