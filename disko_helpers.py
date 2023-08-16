@@ -109,3 +109,23 @@ def clean_up_unfiltered_data():
     if os.path.exists('unfiltered.csv'):
         os.remove('unfiltered.csv')
 
+
+def retrieve_rows_and_lengths():
+    all_rows = []
+    max_lengths = []
+    with open('filtered.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            all_rows.append(row)
+            if not max_lengths:  
+                max_lengths = [len(field) for field in row]
+            else:  
+                max_lengths = [max(max_lengths[i], len(field)) for i, field in enumerate(row)]
+    return all_rows, max_lengths
+
+
+def pretty_print_rows(all_rows, max_lengths): 
+    for row in all_rows:
+        print(' '.join('%%-%ds' % max_lengths[i] % field for i, field in enumerate(row)))
+    os.remove('filtered.csv')
+
